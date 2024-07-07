@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240707105102_Initial")]
+    [Migration("20240707140913_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -44,6 +44,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("ActiveAccountTokens");
                 });
 
@@ -71,6 +74,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("ResetPasswordTokens");
                 });
 
@@ -78,9 +84,6 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ActiveAccountTokenId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
@@ -105,36 +108,41 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ResetPasswordTokenId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActiveAccountTokenId")
-                        .IsUnique();
-
                     b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("ResetPasswordTokenId")
                         .IsUnique();
 
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Domain.ActiveAccountToken", b =>
+                {
+                    b.HasOne("Domain.User", "User")
+                        .WithOne("ActiveAccountToken")
+                        .HasForeignKey("Domain.ActiveAccountToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.ResetPasswordToken", b =>
+                {
+                    b.HasOne("Domain.User", "User")
+                        .WithOne("ResetPasswordToken")
+                        .HasForeignKey("Domain.ResetPasswordToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.User", b =>
                 {
-                    b.HasOne("Domain.ActiveAccountToken", "ActiveAccountToken")
-                        .WithOne()
-                        .HasForeignKey("Domain.User", "ActiveAccountTokenId");
-
-                    b.HasOne("Domain.ResetPasswordToken", "ResetPasswordToken")
-                        .WithOne()
-                        .HasForeignKey("Domain.User", "ResetPasswordTokenId");
-
                     b.Navigation("ActiveAccountToken");
 
                     b.Navigation("ResetPasswordToken");

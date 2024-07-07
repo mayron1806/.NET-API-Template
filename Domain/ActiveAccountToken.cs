@@ -10,10 +10,22 @@ public class ActiveAccountToken
         ExpiresAt = expiresAt;
         CreatedAt = DateTime.UtcNow;
     }
+    public ActiveAccountToken(string content, DateTime expiresAt)
+    {
+        Content = content;
+        ExpiresAt = expiresAt;
+        CreatedAt = DateTime.UtcNow;
+    }
+    
     public int Id { get; }
-    public string Content { get; }
-    public User? User { get; }
-    public int UserId { get; }
-    public DateTime CreatedAt { get; }
-    public DateTime ExpiresAt { get; }
+    public string Content { get; private set; }
+    public User? User { get; private set; }
+    public int UserId { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime ExpiresAt { get; private set; }
+
+    public void AddUser(User user) {
+        User = user;
+        UserId = user.Id;
+    }
 }

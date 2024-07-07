@@ -1,7 +1,6 @@
-namespace Infrastructure.Services.Email
+namespace Infrastructure.Services.Email;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-        Task<bool> SendEmailAsync(string to, string subject, string body);
-    }
+    Task<bool> SendEmailAsync(string to, string subject, string body);
 }

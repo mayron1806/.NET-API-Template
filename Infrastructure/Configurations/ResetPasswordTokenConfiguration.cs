@@ -12,7 +12,11 @@ public class ResetPasswordTokenConfiguration : IEntityTypeConfiguration<ResetPas
         
         builder.Property(x => x.Content).IsRequired().HasMaxLength(100);
         
-        builder.HasOne(x => x.User).WithOne(x => x.ResetPasswordToken).HasForeignKey<ResetPasswordToken>(x => x.UserId);
+        builder
+            .HasOne(x => x.User)
+            .WithOne(x => x.ResetPasswordToken)
+            .HasForeignKey<ResetPasswordToken>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(x => x.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
         builder.Property(x => x.ExpiresAt).IsRequired();

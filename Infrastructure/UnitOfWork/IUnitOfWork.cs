@@ -1,10 +1,11 @@
 using Infrastructure.Repositories.Interfaces;
 
-namespace Infrastructure.UnitOfWork
+namespace Infrastructure.UnitOfWork;
+
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork : IDisposable
-    {
-        Task<int> SaveChangesAsync();
-        IUserRepository User { get; }
-    }
+    Task<int> SaveChangesAsync();
+    IUserRepository User { get; }
+    IActiveAccountTokenRepository ActiveAccountToken { get; }
+    IResetPasswordTokenRepository ResetPasswordToken { get; }
 }
