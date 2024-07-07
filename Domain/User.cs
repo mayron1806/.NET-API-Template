@@ -30,7 +30,9 @@ namespace Domain
         public string Email { get; }
         public string Password { get; private set; }
         public ActiveAccountToken? ActiveAccountToken { get; private set; }
+        public int? ActiveAccountTokenId { get; private set; }
         public ResetPasswordToken? ResetPasswordToken { get; private set; }
+        public int? ResetPasswordTokenId { get; private set; }
         public DateTime CreatedAt { get; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
         public bool EmailVerified { get; private set; } = false;
