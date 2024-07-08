@@ -1,9 +1,8 @@
 ﻿using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
-using FileTransfer.Shared.Settings;
 
-namespace FileTransfer.Infrastructure.Services.Storage;
+namespace Infrastructure.Services.Storage;
 
 public class StorageService : IStorageService
 {
@@ -12,9 +11,7 @@ public class StorageService : IStorageService
     public StorageService(AWSSettings settings)
     {
         var credentials = new BasicAWSCredentials(settings.AccessKey, settings.SecretKey);
-        _s3Client = new AmazonS3Client(credentials, new AmazonS3Config{
-            ServiceURL = settings.Endpoint,
-        });
+        _s3Client = new AmazonS3Client(credentials, new AmazonS3Config{ ServiceURL = settings.Endpoint });
     }
 
     public Task<string> GetSignedURLAsync(string fileName, string contentType)

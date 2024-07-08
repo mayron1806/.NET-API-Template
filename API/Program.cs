@@ -23,8 +23,10 @@ Console.WriteLine("Environment: " + env.EnvironmentName);
 // settings
 var smtp = builder.Configuration.GetSection("SMTP").Get<SMTPSettings>() ?? throw new Exception("SMTP settings not found");
 var jwt = builder.Configuration.GetSection("JWT").Get<JWTSettings>() ?? throw new Exception("JWT settings not found");
+var aws = builder.Configuration.GetSection("AWS").Get<AWSSettings>() ?? throw new Exception("AWS settings not found");
 builder.Services.AddSingleton(smtp);
 builder.Services.AddSingleton(jwt);
+builder.Services.AddSingleton(aws);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

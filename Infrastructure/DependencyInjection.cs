@@ -1,9 +1,7 @@
 ﻿using Infrastructure.Services.Email;
 using Infrastructure.Services.JWT;
-using Infrastructure.Settings;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;

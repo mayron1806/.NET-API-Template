@@ -1,4 +1,4 @@
-﻿namespace FileTransfer.Infrastructure.Services.Storage;
+﻿namespace Infrastructure.Services.Storage;
 
 public interface IStorageService
 {
