@@ -8,4 +8,8 @@ public interface IUnitOfWork : IDisposable
     IUserRepository User { get; }
     IActiveAccountTokenRepository ActiveAccountToken { get; }
     IResetPasswordTokenRepository ResetPasswordToken { get; }
+    IFileRepository File { get; }
+    ITransferRepository Transfer { get; }
+    IOrganizationRepository Organization { get; }
+    IMemberRepository Member { get; }
 }

@@ -8,6 +8,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options): DbConte
     public DbSet<User> Users { get; set; }
     public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
     public DbSet<ActiveAccountToken> ActiveAccountTokens { get; set; }
+    public DbSet<Domain.File> Files { get; set; }
+    public DbSet<Organization> Organizations { get; set; }
+    public DbSet<Transfer> Transfers { get; set; }
+    public DbSet<Member> Members { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
