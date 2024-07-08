@@ -2,16 +2,20 @@
 using Infrastructure.Services.JWT;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, ConfigurationManager configuration)
     {
+        var connectionString = configuration.GetConnectionString("postgres");
+        if (string.IsNullOrEmpty(connectionString)) throw new Exception("Database connection string not found");
+
         // db
-        services.AddDbContext<DatabaseContext>(options => options.UseSqlite("Data Source=../database.db"));
+        services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
         // services
