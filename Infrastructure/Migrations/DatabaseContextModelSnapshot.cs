@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,29 +16,35 @@ namespace Infrastructure.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Domain.ActiveAccountToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -51,25 +58,27 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContentType")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("OriginalName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Path")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Size")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TransferId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -81,14 +90,14 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Member", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("OrganizationId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsOwner")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
                     b.HasKey("UserId", "OrganizationId");
@@ -102,20 +111,22 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
                     b.Property<string>("Plan")
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("PlanActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
                     b.HasKey("Id");
@@ -127,23 +138,25 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -157,36 +170,38 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("FilesCount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Key")
                         .IsRequired()
                         .HasMaxLength(24)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(24)");
 
                     b.Property<int>("OrganizationId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Path")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Size")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TransferType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -202,32 +217,34 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("EmailVerified")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -300,25 +317,25 @@ namespace Infrastructure.Migrations
                     b.OwnsOne("Domain.Receive", "Receive", b1 =>
                         {
                             b1.Property<int>("TransferId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<string>("AcceptedFiles")
                                 .HasColumnType("jsonb");
 
                             b1.Property<int>("MaxSize")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<string>("Message")
                                 .HasMaxLength(500)
-                                .HasColumnType("TEXT");
+                                .HasColumnType("character varying(500)");
 
                             b1.Property<string>("Password")
                                 .HasMaxLength(100)
-                                .HasColumnType("TEXT");
+                                .HasColumnType("character varying(100)");
 
                             b1.Property<bool>("Received")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(false);
 
                             b1.HasKey("TransferId");
@@ -332,32 +349,32 @@ namespace Infrastructure.Migrations
                     b.OwnsOne("Domain.Send", "Send", b1 =>
                         {
                             b1.Property<int>("TransferId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<string>("Destination")
                                 .HasColumnType("jsonb");
 
                             b1.Property<int>("Downloads")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER")
+                                .HasColumnType("integer")
                                 .HasDefaultValue(0);
 
                             b1.Property<bool>("ExpiresOnDowload")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(false);
 
                             b1.Property<string>("Message")
                                 .HasMaxLength(500)
-                                .HasColumnType("TEXT");
+                                .HasColumnType("character varying(500)");
 
                             b1.Property<string>("Password")
                                 .HasMaxLength(100)
-                                .HasColumnType("TEXT");
+                                .HasColumnType("character varying(100)");
 
                             b1.Property<bool>("QuickDownload")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(false);
 
                             b1.HasKey("TransferId");

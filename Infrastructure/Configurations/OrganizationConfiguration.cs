@@ -9,7 +9,7 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
     public void Configure(EntityTypeBuilder<Organization> builder)
     {
         builder.HasKey(x => x.Id);
-
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder
             .HasMany(x => x.Members)
             .WithOne(x => x.Organization)

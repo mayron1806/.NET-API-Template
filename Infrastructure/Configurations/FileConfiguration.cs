@@ -8,7 +8,7 @@ public class FileConfiguration : IEntityTypeConfiguration<Domain.File>
     public void Configure(EntityTypeBuilder<Domain.File> builder)
     {
         builder.HasKey(x => x.Id);
-
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder
             .Property(x => x.OriginalName)
             .IsRequired();

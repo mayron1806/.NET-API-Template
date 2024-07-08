@@ -11,7 +11,7 @@ public class TransferConfiguration : IEntityTypeConfiguration<Transfer>
     public void Configure(EntityTypeBuilder<Transfer> builder)
     {
         builder.HasKey(x => x.Id);
-        
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder
             .HasMany(x => x.Files)
             .WithOne(x => x.Transfer)
