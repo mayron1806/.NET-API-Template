@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services/" />
     <Folder Include="UseCases/ActiveAccount/" />
     <Folder Include="UseCases/CreateAccount/" />
     <Folder Include="UseCases/ForgetPassword/" />

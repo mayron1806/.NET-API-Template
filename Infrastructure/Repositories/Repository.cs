@@ -6,8 +6,8 @@ namespace Infrastructure.Repositories;
 
 public abstract class Repository<TEntity, Key> : IRepository<TEntity, Key> where TEntity : class
 {
-    private readonly DatabaseContext _context;
-    private readonly DbSet<TEntity> _dbSet;
+    protected readonly DatabaseContext _context;
+    protected readonly DbSet<TEntity> _dbSet;
 
     public Repository(DatabaseContext context)
     {
@@ -32,9 +32,19 @@ public abstract class Repository<TEntity, Key> : IRepository<TEntity, Key> where
         _dbSet.Attach(objModel);
         _context.Entry(objModel).State = EntityState.Modified;
     }
-    public virtual async Task<TEntity?> GetByIdAsync(Key id)
+    public virtual async Task<TEntity?> GetByIdAsync(Key id, string? includeProperties = null, bool asNoTracking = true)
     {
-        return await _dbSet.AsNoTracking().FirstOrDefaultAsync(entity => EF.Property<Key>(entity, "Id")!.Equals(id));
+        IQueryable<TEntity> query = _dbSet;
+        if (includeProperties != null)
+        {
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+        if (asNoTracking) query = query.AsNoTracking();
+        return await query.FirstOrDefaultAsync(entity => EF.Property<Key>(entity, "Id")!.Equals(id));
     }
     public virtual async Task<TEntity?> GetFirstAsync(Expression<Func<TEntity, bool>>? filter = null, string? includeProperties = null, bool asNoTracking = true)
     {

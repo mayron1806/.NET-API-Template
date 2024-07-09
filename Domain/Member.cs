@@ -8,6 +8,11 @@ public class Member
         OrganizationId = organizationId;
         IsOwner = isOwner;
     }
+    public Member(int userId, bool isOwner) 
+    {
+        UserId = userId;
+        IsOwner = isOwner;
+    }
     public User? User { get; }
     public int UserId { get; }
 

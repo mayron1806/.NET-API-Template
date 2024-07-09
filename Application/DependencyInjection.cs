@@ -1,6 +1,9 @@
-﻿using Application.UseCases.ActiveAccount;
+﻿using Application.Services.PlanService;
+using Application.UseCases.ActiveAccount;
 using Application.UseCases.CreateAccount;
+using Application.UseCases.CreateOrganization;
 using Application.UseCases.ForgetPassword;
+using Application.UseCases.GetOrganizationByUser;
 using Application.UseCases.Login;
 using Application.UseCases.ResetPassword;
 using FluentValidation;
@@ -13,6 +16,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        // services
+        services.AddScoped<IPlanService, PlanService>();
         // validations
         services.AddFluentValidationAutoValidation();
         services.AddScoped<IValidator<CreateAccountInputDto>, CreateAccountValidator>();
@@ -27,6 +32,8 @@ public static class DependencyInjection
         services.AddScoped<IActiveAccountUseCase, ActiveAccountUseCase>();
         services.AddScoped<IForgetPasswordUseCase, ForgetPasswordUseCase>();
         services.AddScoped<IResetPasswordUseCase, ResetPasswordUseCase>();
+        services.AddScoped<IGetOrganizationByUserUseCase, GetOrganizationByUserUseCase>();
+        services.AddScoped<ICreateOrganizationUseCase, CreateOrganizationUseCase>();
         return services;
     }
 }
