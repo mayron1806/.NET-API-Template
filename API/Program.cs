@@ -107,6 +107,8 @@ app.UseMiddleware<CustomAuthorizationMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<OrganizationMiddleware>();
+
 app.MapControllers();
 
 app.Run();
