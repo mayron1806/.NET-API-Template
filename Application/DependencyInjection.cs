@@ -1,16 +1,17 @@
-﻿using Application.Services.PlanService;
+﻿using Application.Jobs;
+using Application.Services.PlanService;
 using Application.UseCases.ActiveAccount;
 using Application.UseCases.ConfirmFilesUpload;
 using Application.UseCases.CreateAccount;
 using Application.UseCases.CreateOrganization;
 using Application.UseCases.ForgetPassword;
-using Application.UseCases.GetOrganizationByUser;
 using Application.UseCases.Login;
 using Application.UseCases.PrepareFilesUpload;
 using Application.UseCases.ResetPassword;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 
 namespace Application;
 
@@ -36,10 +37,25 @@ public static class DependencyInjection
         services.AddScoped<IActiveAccountUseCase, ActiveAccountUseCase>();
         services.AddScoped<IForgetPasswordUseCase, ForgetPasswordUseCase>();
         services.AddScoped<IResetPasswordUseCase, ResetPasswordUseCase>();
-        services.AddScoped<IGetOrganizationByUserUseCase, GetOrganizationByUserUseCase>();
         services.AddScoped<ICreateOrganizationUseCase, CreateOrganizationUseCase>();
         services.AddScoped<IPrepareFilesUpload, PrepareFilesUploadUseCase>();
         services.AddScoped<IConfirmFilesUpload, ConfirmFilesUploadUseCase>();
+
+        // jobs
+        services.AddQuartz(q =>
+        {
+            // Just use the name of your job that you created in the Jobs folder.
+            var jobKey = new JobKey("ResetUploadDayCount");
+            q.AddJob<ResetUploadDayCount>(opts => opts.WithIdentity(jobKey));
+            
+            q.AddTrigger(opts => opts
+                .ForJob(jobKey)
+                .WithIdentity("ResetUploadDayCount-trigger")
+                .WithCronSchedule("0 0 0 * * ? *")
+            );
+        });
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
         return services;
     }
 }

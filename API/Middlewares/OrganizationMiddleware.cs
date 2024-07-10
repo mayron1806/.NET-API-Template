@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Application.UseCases.GetOrganizationByUser;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -17,38 +17,50 @@ public class OrganizationMiddleware(RequestDelegate next)
             return;
         }
         Console.WriteLine("[ORGANIZATION MIDDLEWARE]");
-        var organizationId = context.Request.RouteValues["organizationId"]?.ToString();
-        if (!string.IsNullOrEmpty(organizationId)) {
+        var organizationIdRoute = context.Request.RouteValues["organizationId"]?.ToString();
+        if (!string.IsNullOrEmpty(organizationIdRoute)) {
             var logger = context.RequestServices.GetRequiredService<ILogger<OrganizationMiddleware>>();
-            var userId = context.User.FindFirst(ClaimTypes.Name)?.Value;
-            if (string.IsNullOrEmpty(userId))
+            var userIdRoute = context.User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userIdRoute))
             {
                 await WriteForbiddenResponse(context, "Usuário não tem autorizacão para essa organização");
+                return;
+            }
+            if(!int.TryParse(userIdRoute, out var userId)) {
+                await WriteForbiddenResponse(context, "Organização inválida");
+                return;
+            }
+            if(!int.TryParse(organizationIdRoute, out var organizationId)) {
+                await WriteForbiddenResponse(context, "Organização inválida");
                 return;
             }
             // pega ou cria organização no cache
             var memoryCache = context.RequestServices.GetRequiredService<IMemoryCache>();
             var organization = await memoryCache.GetOrCreateAsync(
-                "organization_" + organizationId + "_user_" + userId,
+                "organization_" + organizationIdRoute + "_user_" + userIdRoute,
                 async entry => {
                     entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5);
-                    var getOrganizationByUserUseCase = context.RequestServices.GetRequiredService<IGetOrganizationByUserUseCase>();
-                    var org = await getOrganizationByUserUseCase.Execute(new() { UserId = int.Parse(userId) });
+                    var uow = context.RequestServices.GetRequiredService<IUnitOfWork>();
+                    var members = await uow.Member.GetFirstAsync(x => x.UserId == userId && x.OrganizationId == organizationId);
+                    if (members == null) return null;
+                    
+                    var org = await uow.Organization.GetByIdAsync(organizationId);
+                    if(org == null) return null;
+                    
                     logger.LogInformation("[MISS] Organization: " + JsonConvert.SerializeObject(org));
                     return org;
                 }
             );
-
-            if (organization == null || organization.OrganizationId.ToString() != organizationId)
+            if (organization == null)
             {
                 await WriteForbiddenResponse(context, "Usuário não tem autorizacão para essa organização");
                 return;
             }
         }
-        context.Items["organizationId"] = organizationId;
+        context.Items["organizationId"] = organizationIdRoute;
         await _next(context);
     }
-    private async Task WriteForbiddenResponse(HttpContext context, string message)
+    private static async Task WriteForbiddenResponse(HttpContext context, string message)
     {
         context.Response.StatusCode = StatusCodes.Status403Forbidden;
         context.Response.ContentType = "application/json";
