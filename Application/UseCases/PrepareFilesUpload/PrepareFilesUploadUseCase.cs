@@ -65,7 +65,7 @@ public class PrepareFilesUploadUseCase(
         var transfer = new Transfer(transferKey, organization.Id, expiresAt, filesSize, TransferType.Send);
         transfer.AddSend(new Send(
             message: input.Message,
-            password: plan.Limits.CanUsePassword ? input.Password : null,
+            password: plan.Limits.CanUsePassword && !string.IsNullOrEmpty(input.Password) ? Security.HashPassword(input.Password) : null,
             quickDownload: plan.Limits.CanUseQuickDownload && input.QuickDownload,
             expiresOnDowload: plan.Limits.CanUseExpiresOnDownload && input.ExpiresOnDownload,
             destination: input.EmailsDestination
