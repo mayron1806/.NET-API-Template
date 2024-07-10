@@ -33,4 +33,14 @@ public class PlanService(IUnitOfWork unitOfWork): IPlanService
             _ => throw new HttpException(400, "Plano invalido"),
         };
     }
+    public Plan GetPlan(string plan) {
+        return plan switch
+        {
+            "Free" => Plans.Free,
+            "Starter" => Plans.Starter,
+            "Pro" => Plans.Pro,
+            "ProMax" => Plans.ProMax,
+            _ => throw new HttpException(400, "Plano invalido"),
+        };
+    }
 }

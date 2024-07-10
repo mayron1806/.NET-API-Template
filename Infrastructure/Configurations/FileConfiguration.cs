@@ -26,6 +26,17 @@ public class FileConfiguration : IEntityTypeConfiguration<Domain.File>
             .IsRequired();
 
         builder
+            .Property(x => x.Key);
+
+        builder
+            .Property(x => x.Status)
+            .IsRequired();
+
+        builder
+            .Property(x => x.ErrorMessage)
+            .HasDefaultValue(null)
+            .IsRequired(false);
+        builder
             .HasOne(x => x.Transfer)
             .WithMany(x => x.Files)
             .HasForeignKey(x => x.TransferId)

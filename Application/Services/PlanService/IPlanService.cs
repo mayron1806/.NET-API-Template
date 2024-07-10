@@ -8,4 +8,5 @@ public interface IPlanService
     Task<Plan> GetPlanByOrganizationIdAsync(int organizationId);
     Plan GetPlanByOrganization(Organization org);
     Plan GetPlan(PlanName plan);
+    Plan GetPlan(string plan);
 }

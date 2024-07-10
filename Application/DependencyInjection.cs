@@ -1,10 +1,12 @@
 ﻿using Application.Services.PlanService;
 using Application.UseCases.ActiveAccount;
+using Application.UseCases.ConfirmFilesUpload;
 using Application.UseCases.CreateAccount;
 using Application.UseCases.CreateOrganization;
 using Application.UseCases.ForgetPassword;
 using Application.UseCases.GetOrganizationByUser;
 using Application.UseCases.Login;
+using Application.UseCases.PrepareFilesUpload;
 using Application.UseCases.ResetPassword;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -25,6 +27,8 @@ public static class DependencyInjection
         services.AddScoped<IValidator<ResetPasswordInputDto>, ResetPasswordValidator>();
         services.AddScoped<IValidator<ForgetPasswordInputDto>, ForgetPasswordValidator>();
         services.AddScoped<IValidator<ActiveAccountInputDto>, ActiveAccountValidator>();
+        services.AddScoped<IValidator<PrepareFilesUploadInputDto>, PrepareFilesUploadValidator>();
+        services.AddScoped<IValidator<ConfirmFilesUploadInputDto>, ConfirmFilesUploadValidator>();
         
         // use cases
         services.AddScoped<ICreateAccountUseCase, CreateAccountUseCase>();
@@ -34,6 +38,8 @@ public static class DependencyInjection
         services.AddScoped<IResetPasswordUseCase, ResetPasswordUseCase>();
         services.AddScoped<IGetOrganizationByUserUseCase, GetOrganizationByUserUseCase>();
         services.AddScoped<ICreateOrganizationUseCase, CreateOrganizationUseCase>();
+        services.AddScoped<IPrepareFilesUpload, PrepareFilesUploadUseCase>();
+        services.AddScoped<IConfirmFilesUpload, ConfirmFilesUploadUseCase>();
         return services;
     }
 }

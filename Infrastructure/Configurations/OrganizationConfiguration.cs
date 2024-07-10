@@ -21,6 +21,17 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
             .WithOne(x => x.Organization)
             .HasForeignKey(x => x.OrganizationId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .Property(x => x.StoredSize)
+            .HasDefaultValue(0)
+            .HasColumnType("bigint")
+            .IsRequired();
+        
+        builder
+            .Property(x => x.DayUploadCount)
+            .HasDefaultValue(0)
+            .IsRequired();
         
         builder
             .Property(x => x.Plan)

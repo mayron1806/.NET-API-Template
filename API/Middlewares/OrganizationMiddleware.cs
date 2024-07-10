@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Application.UseCases.GetOrganizationByUser;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
@@ -10,6 +11,11 @@ public class OrganizationMiddleware(RequestDelegate next)
     private readonly RequestDelegate _next = next;
     public async Task InvokeAsync(HttpContext context)
     {
+        var allowAnonymous = context.GetEndpoint()!.Metadata.Any(x => x.GetType() == typeof(AllowAnonymousAttribute));
+        if (allowAnonymous) {
+            await _next(context);
+            return;
+        }
         Console.WriteLine("[ORGANIZATION MIDDLEWARE]");
         var organizationId = context.Request.RouteValues["organizationId"]?.ToString();
         if (!string.IsNullOrEmpty(organizationId)) {

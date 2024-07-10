@@ -13,7 +13,9 @@ public static class Plans
             canUseExpiresOnDownload: false, 
             canUseQuickDownload: false,
             canUsePassword: true,
-            maxExpireDays: 7
+            maxExpireDays: 7,
+            maxUploadConcurrency: 500,
+            maxUploadPerDay: 500
         )
     );
     public static Plan Starter => new(
@@ -27,7 +29,9 @@ public static class Plans
             canUseExpiresOnDownload: true,
             canUseQuickDownload: true,
             canUsePassword: true,
-            maxExpireDays: 30
+            maxExpireDays: 30,
+            maxUploadConcurrency: 200,
+            maxUploadPerDay: 1000
         )
     );
     public static Plan Pro => new(
@@ -41,7 +45,9 @@ public static class Plans
             canUseExpiresOnDownload: true,
             canUseQuickDownload: true,
             canUsePassword: true,
-            maxExpireDays: 365
+            maxExpireDays: 365,
+            maxUploadConcurrency: 300,
+            maxUploadPerDay: 10000
         )
     );
     public static Plan ProMax => new(
@@ -55,7 +61,9 @@ public static class Plans
             canUseExpiresOnDownload: true,
             canUseQuickDownload: true,
             canUsePassword: true,
-            maxExpireDays: 365
+            maxExpireDays: 365,
+            maxUploadConcurrency: 300,
+            maxUploadPerDay: 30000
         )
     );
 }

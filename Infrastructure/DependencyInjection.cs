@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Services.Email;
 using Infrastructure.Services.JWT;
+using Infrastructure.Services.Storage;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,7 @@ public static class DependencyInjection
 
         // services
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IStorageService, StorageService>();
         services.AddScoped<JWTService>();
         
         return services;

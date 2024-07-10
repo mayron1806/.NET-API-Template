@@ -50,6 +50,11 @@ public class TransferConfiguration : IEntityTypeConfiguration<Transfer>
             .IsRequired();
 
         builder
+            .Property(x => x.Expired)
+            .HasDefaultValue(false)
+            .IsRequired();
+    
+        builder
             .Property(x => x.Path)
             .IsRequired();
         

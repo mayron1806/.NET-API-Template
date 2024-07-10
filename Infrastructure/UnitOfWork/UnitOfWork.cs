@@ -1,5 +1,6 @@
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.UnitOfWork;
 
@@ -28,7 +29,9 @@ public class UnitOfWork: IUnitOfWork
         Organization = new OrganizationRepository(_context);
         Member = new MemberRepository(_context);
     }
-
+    public async Task<IDbContextTransaction> BeginTransactionAsync() => await _context.Database.BeginTransactionAsync();
+    public async Task CommitTransactionAsync(IDbContextTransaction transaction) => await transaction.CommitAsync();
+    public async Task RollbackTransactionAsync(IDbContextTransaction transaction) => await transaction.RollbackAsync();
     public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
 
     #region Dispose
