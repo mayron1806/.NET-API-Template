@@ -9,6 +9,7 @@ using System.Text;
 using Infrastructure.Settings;
 using Microsoft.OpenApi.Models;
 using API.Middlewares;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,11 @@ builder.Configuration.SetBasePath(env.ContentRootPath)
     .AddEnvironmentVariables();
 
 Console.WriteLine("Environment: " + env.EnvironmentName);
+
+Log.Logger = new LoggerConfiguration().Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("../Logs/log-.txt", rollingInterval: RollingInterval.Day).CreateLogger();
+builder.Services.AddLogging(log => log.AddSerilog(dispose: true));
 
 // settings
 var smtp = builder.Configuration.GetSection("SMTP").Get<SMTPSettings>() ?? throw new Exception("SMTP settings not found");
