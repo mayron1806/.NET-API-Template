@@ -1,5 +1,4 @@
 using Infrastructure.UnitOfWork;
-using Newtonsoft.Json;
 using Quartz;
 
 namespace Application.Jobs;

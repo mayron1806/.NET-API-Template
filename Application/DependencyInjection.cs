@@ -41,17 +41,23 @@ public static class DependencyInjection
         services.AddScoped<IPrepareFilesUpload, PrepareFilesUploadUseCase>();
         services.AddScoped<IConfirmFilesUpload, ConfirmFilesUploadUseCase>();
 
-        // jobs
         services.AddQuartz(q =>
         {
-            // Just use the name of your job that you created in the Jobs folder.
-            var jobKey = new JobKey("ResetUploadDayCount");
-            q.AddJob<ResetUploadDayCount>(opts => opts.WithIdentity(jobKey));
-            
+            var resetUploadDayCountKey = new JobKey("ResetUploadDayCount");
+            var deleteExpiredFilesKey = new JobKey("deleteExpiredFiles");
+
+            q.AddJob<ResetUploadDayCount>(opts => opts.WithIdentity(resetUploadDayCountKey));
+            q.AddJob<DeleteExpiredFile>(opts => opts.WithIdentity(deleteExpiredFilesKey));
+
             q.AddTrigger(opts => opts
-                .ForJob(jobKey)
+                .ForJob(resetUploadDayCountKey)
                 .WithIdentity("ResetUploadDayCount-trigger")
-                .WithCronSchedule("0 0 0 * * ? *")
+                .WithCronSchedule("0 0 0 * * ? *") // todo dia meia noite
+            );
+            q.AddTrigger(opts => opts
+                .ForJob(deleteExpiredFilesKey)
+                .WithIdentity("deleteExpiredFiles-trigger")
+                .WithCronSchedule("0 0 * * * ? *") // todo dia a cada hora
             );
         });
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

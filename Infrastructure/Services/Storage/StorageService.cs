@@ -3,6 +3,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Infrastructure.Settings;
+using Newtonsoft.Json;
 
 namespace Infrastructure.Services.Storage;
 
@@ -25,6 +26,22 @@ public class StorageService : IStorageService
             Key = key
         };
         await _s3Client.DeleteObjectAsync(request);
+        return true;
+    }
+        public async Task<bool> DeleteFolderAsync(string bucket, string key)
+    {
+        var request = new ListObjectsV2Request
+        {
+            BucketName = bucket,
+            Prefix = key,
+        };
+        var files = await _s3Client.ListObjectsV2Async(request);
+        var delete = new DeleteObjectsRequest 
+        {
+            BucketName = bucket,
+            Objects = files.S3Objects.Select(x => new KeyVersion{Key = x.Key}).ToList()
+        };
+        await _s3Client.DeleteObjectsAsync(delete);
         return true;
     }
 

@@ -6,6 +6,7 @@ public interface IStorageService
     Task<string> GetObjectSignedURLAsync(string bucket, string key, string contentType);
     Task<string> PutObjectSignedURLAsync(string bucket, string key, string contentType);
     Task<bool> DeleteObjectAsync(string bucket, string key);
+    Task<bool> DeleteFolderAsync(string bucket, string key);
     Task<ObjectInfo> GetObjectInfoAsync(string bucket, string key);
 }
 public class ObjectInfo {

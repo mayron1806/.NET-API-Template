@@ -4,7 +4,6 @@ using Domain;
 using Infrastructure.Services.Storage;
 using Infrastructure.UnitOfWork;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Application.UseCases.ConfirmFilesUpload;
 

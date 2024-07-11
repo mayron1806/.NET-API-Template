@@ -32,7 +32,7 @@ public class Transfer
     public bool Expired { get; set; }
     public long Size { get; private set; }
     public int FilesCount { get; private set; }
-    public string? Path { get; private set; }
+    public string Path { get; private set; }
     public TransferType TransferType { get; private set; }
     public Receive? Receive { get; private set; }
     public Send? Send { get; private set; }
@@ -41,6 +41,10 @@ public class Transfer
         files.Add(file);
         Files = files;
         FilesCount = Files.Count();
+    }
+
+    public void SetAsExpired() {
+        Expired = true;
     }
 
     public void AddReceive(Receive receive) => Receive = receive;
