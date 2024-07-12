@@ -10,10 +10,12 @@ public class Send
         ExpiresOnDowload = expiresOnDowload;
         Destination = destination;
     }
-    public string? Message { get; }
-    public string? Password { get; }
-    public int Downloads { get; }
-    public bool QuickDownload { get; }
-    public bool ExpiresOnDowload { get; }
-    public IEnumerable<string>? Destination { get; }
+    public string? Message { get; private set; }
+    public string? Password { get; private set; }
+    public int Downloads { get; private set; }
+    public bool QuickDownload { get; private set; }
+    public bool ExpiresOnDowload { get; private set; }
+    public IEnumerable<string>? Destination { get; private set; }
+
+    public void IncrementDownload() => Downloads++;
 }
