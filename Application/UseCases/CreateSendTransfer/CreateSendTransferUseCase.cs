@@ -8,20 +8,20 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Visus.Cuid;
 
-namespace Application.UseCases.PrepareFilesUpload;
+namespace Application.UseCases.CreateSendTransfer;
 
-public class PrepareFilesUploadUseCase(
-    ILogger<PrepareFilesUploadUseCase> logger,
+public class CreateSendTransferUseCase(
+    ILogger<CreateSendTransferUseCase> logger,
     IUnitOfWork unitOfWork,
     IPlanService planService,
     IStorageService storageService
-    ) : UseCase<PrepareFilesUploadInputDto, PrepareFilesUploadOutputDto>(logger), IPrepareFilesUpload
+    ) : UseCase<CreateSendTransferInputDto, CreateSendTransferOutputDto>(logger), ICreateSendTransfer
 {
     private readonly IStorageService _storageService = storageService;
     private readonly IPlanService _planService = planService;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     
-    public override async Task<PrepareFilesUploadOutputDto> Execute(PrepareFilesUploadInputDto input)
+    public override async Task<CreateSendTransferOutputDto> Execute(CreateSendTransferInputDto input)
     {
         if (input.Files == null || !input.Files.Any()) throw new HttpException(400, "Forneça ao menos 1 arquivo");
         
@@ -89,6 +89,6 @@ public class PrepareFilesUploadUseCase(
         await _unitOfWork.SaveChangesAsync();
         _logger.LogInformation(JsonConvert.SerializeObject(urls));
         // retorna urls dos arquivos
-        return new PrepareFilesUploadOutputDto(urls, transfer);
+        return new CreateSendTransferOutputDto(urls, transfer);
     }
 }

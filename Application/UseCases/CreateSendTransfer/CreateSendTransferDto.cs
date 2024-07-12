@@ -1,12 +1,12 @@
 ﻿using Domain;
 
-namespace Application.UseCases.PrepareFilesUpload;
+namespace Application.UseCases.CreateSendTransfer;
 
 // lista de arquivos para fazer upload
 // Name
 // ContentType
 // Size
-public class PrepareFilesUploadInputDto
+public class CreateSendTransferInputDto
 {
     public int UserId { get; set; }
     public int OrganizationId { get; set; }
@@ -24,7 +24,7 @@ public class PrepareFilesUploadInputDto
         public long Size { get; set; }
     }
 }
-public class PrepareFilesUploadOutputDto(IEnumerable<string> urls, Transfer transfer)
+public class CreateSendTransferOutputDto(IEnumerable<string> urls, Transfer transfer)
 {
     public IEnumerable<string> Urls { get; set; } = urls;
     public Transfer Transfer { get; set; } = transfer;

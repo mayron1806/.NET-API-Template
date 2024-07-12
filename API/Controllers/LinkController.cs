@@ -1,5 +1,5 @@
-using System.Net;
 using System.Text.Json;
+using API.Dto;
 using API.Exceptions;
 using Application.Utils;
 using Infrastructure.Services.Storage;
@@ -26,15 +26,16 @@ public class LinkController(
         _logger.LogInformation("Sending response");
         var transfer = await _unitOfWork.Transfer.GetByKeyWithFiles(transferKey, 20, 0);
         if (transfer == null) return NotFound();
-        return Ok(transfer);
+        return Ok(LinkGetTrasferDto.Map(transfer));
     }
+    
     [HttpGet("{transferKey}/files")]
     [ResponseCache(Duration = 60)]
     public async Task<IActionResult> GetTransferFiles([FromRoute] string transferKey, [FromQuery] int limit = 20, [FromQuery] int offset = 0)
     {
         var files = await _unitOfWork.File.GetListAsync(x => x.Transfer!.Key == transferKey, limit: limit, offset: offset);
         if (files == null) return NotFound();
-        return Ok(files);
+        return Ok(LinkGetTrasferFilesDto.Map(files));
     }
 
     [HttpGet("{transferKey}/get-download-url")]
@@ -142,8 +143,7 @@ public class LinkController(
     {
         try
         {
-            var res = await _storageService.GetObjectSignedURLAsync(StorageBuckets.FileTransfer, key);
-            return res;
+            return await _storageService.GetObjectSignedURLAsync(StorageBuckets.FileTransfer, key);
         }
         catch (Exception ex)
         {

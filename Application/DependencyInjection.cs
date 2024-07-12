@@ -1,12 +1,12 @@
 ﻿using Application.Jobs;
 using Application.Services.PlanService;
 using Application.UseCases.ActiveAccount;
-using Application.UseCases.ConfirmFilesUpload;
+using Application.UseCases.ConfirmFileReceive;
 using Application.UseCases.CreateAccount;
 using Application.UseCases.CreateOrganization;
 using Application.UseCases.ForgetPassword;
 using Application.UseCases.Login;
-using Application.UseCases.PrepareFilesUpload;
+using Application.UseCases.CreateSendTransfer;
 using Application.UseCases.ResetPassword;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -28,8 +28,8 @@ public static class DependencyInjection
         services.AddScoped<IValidator<ResetPasswordInputDto>, ResetPasswordValidator>();
         services.AddScoped<IValidator<ForgetPasswordInputDto>, ForgetPasswordValidator>();
         services.AddScoped<IValidator<ActiveAccountInputDto>, ActiveAccountValidator>();
-        services.AddScoped<IValidator<PrepareFilesUploadInputDto>, PrepareFilesUploadValidator>();
-        services.AddScoped<IValidator<ConfirmFilesUploadInputDto>, ConfirmFilesUploadValidator>();
+        services.AddScoped<IValidator<CreateSendTransferInputDto>, CreateSendTransferValidator>();
+        services.AddScoped<IValidator<ConfirmFileReceiveInputDto>, ConfirmFileReceiveValidator>();
         
         // use cases
         services.AddScoped<ICreateAccountUseCase, CreateAccountUseCase>();
@@ -38,8 +38,8 @@ public static class DependencyInjection
         services.AddScoped<IForgetPasswordUseCase, ForgetPasswordUseCase>();
         services.AddScoped<IResetPasswordUseCase, ResetPasswordUseCase>();
         services.AddScoped<ICreateOrganizationUseCase, CreateOrganizationUseCase>();
-        services.AddScoped<IPrepareFilesUpload, PrepareFilesUploadUseCase>();
-        services.AddScoped<IConfirmFilesUpload, ConfirmFilesUploadUseCase>();
+        services.AddScoped<ICreateSendTransfer, CreateSendTransferUseCase>();
+        services.AddScoped<IConfirmFileReceive, ConfirmFileReceiveUseCase>();
 
         services.AddQuartz(q =>
         {

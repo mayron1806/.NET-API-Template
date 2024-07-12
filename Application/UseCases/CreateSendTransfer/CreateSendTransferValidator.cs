@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Application.UseCases.PrepareFilesUpload;
+namespace Application.UseCases.CreateSendTransfer;
 
-public class PrepareFilesUploadValidator: AbstractValidator<PrepareFilesUploadInputDto>
+public class CreateSendTransferValidator: AbstractValidator<CreateSendTransferInputDto>
 {
-    public PrepareFilesUploadValidator()
+    public CreateSendTransferValidator()
     {
         RuleForEach(x => x.EmailsDestination)
             .EmailAddress()
@@ -19,7 +19,7 @@ public class PrepareFilesUploadValidator: AbstractValidator<PrepareFilesUploadIn
             .WithMessage("A mensagem deve ter no maximo 500 caracteres");
 
         RuleForEach(x => x.Files)
-            .SetValidator(new PrepareFilesUploadFileValidator());
+            .SetValidator(new CreateSendTransferFileValidator());
 
         RuleFor(x => x.Files)
             .NotNull().WithMessage("O campo arquivos é obrigatório")
@@ -27,9 +27,9 @@ public class PrepareFilesUploadValidator: AbstractValidator<PrepareFilesUploadIn
 
     }
 }
-class PrepareFilesUploadFileValidator: AbstractValidator<PrepareFilesUploadInputDto.FileUpload>
+class CreateSendTransferFileValidator: AbstractValidator<CreateSendTransferInputDto.FileUpload>
 {
-    public PrepareFilesUploadFileValidator()
+    public CreateSendTransferFileValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("O campo nome é obrigatório")

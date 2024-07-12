@@ -5,19 +5,19 @@ using Infrastructure.Services.Storage;
 using Infrastructure.UnitOfWork;
 using Microsoft.Extensions.Logging;
 
-namespace Application.UseCases.ConfirmFilesUpload;
+namespace Application.UseCases.ConfirmFileReceive;
 
-public class ConfirmFilesUploadUseCase(
-    ILogger<ConfirmFilesUploadUseCase> logger,
+public class ConfirmFileReceiveUseCase(
+    ILogger<ConfirmFileReceiveUseCase> logger,
     IUnitOfWork unitOfWork,
     IStorageService storageService
-    ) : UseCase<ConfirmFilesUploadInputDto, ConfirmFilesUploadOutputDto>(logger), IConfirmFilesUpload
+    ) : UseCase<ConfirmFileReceiveInputDto, ConfirmFileReceiveOutputDto>(logger), IConfirmFileReceive
 {
     private readonly IStorageService _storageService = storageService;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly int FILE_READ_BATCH_SIZE = 500;
 
-    public override async Task<ConfirmFilesUploadOutputDto> Execute(ConfirmFilesUploadInputDto input)
+    public override async Task<ConfirmFileReceiveOutputDto> Execute(ConfirmFileReceiveInputDto input)
     {
         var transfer = await _unitOfWork.Transfer.GetFirstAsync(x => x.Key == input.TransferKey);
         if (transfer == null) throw new HttpException(400, "Transferencia invalida");
@@ -55,7 +55,7 @@ public class ConfirmFilesUploadUseCase(
                 throw new HttpException(500, "Ocorreu um erro ao tentar confirmar os arquivos");
             }
         }
-        return new ConfirmFilesUploadOutputDto();
+        return new ConfirmFileReceiveOutputDto();
     }
     private async Task<(long FileId, bool IsValid, string? Error)> ValidateFile(Domain.File file)
     {

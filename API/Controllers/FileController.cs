@@ -1,37 +1,21 @@
-﻿using Application.UseCases.ConfirmFilesUpload;
-using Application.UseCases.PrepareFilesUpload;
-using Microsoft.AspNetCore.Authorization;
+﻿using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
+
 [ApiController]
-[Route("api/organization/{organizationId}/[controller]")]
+[Route("api/organization/{organizationId}/transfer/{transferKey}/[controller]")]
 public class FileController(
     ILogger<FileController> logger,
-    IPrepareFilesUpload prepareFilesUpload,
-    IConfirmFilesUpload confirmFilesUpload
+    IUnitOfWork unitOfWork
 ): BaseController(logger)
 {
-    private readonly IPrepareFilesUpload _prepareFilesUpload = prepareFilesUpload;
-    private readonly IConfirmFilesUpload _confirmFilesUpload = confirmFilesUpload;
-    [HttpPost]
-    public async Task<ActionResult<PrepareFilesUploadInputDto>> PrepareUpload([FromBody] PrepareFilesUploadInputDto body) 
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    [HttpGet]
+    public async Task<IActionResult> GetTransferFiles([FromRoute] string transferKey, [FromQuery] int limit = 20, [FromQuery] int offset = 0)
     {
-        var userId = GetUserId();
-        var organizationId = GetOrganizationId();
-        return Ok(await _prepareFilesUpload.Execute(new() { 
-            UserId = userId,
-            OrganizationId = organizationId,
-            Files = body.Files,
-            EmailsDestination = body.EmailsDestination,
-            ExpiresAt = body.ExpiresAt,
-            ExpiresOnDownload = body.ExpiresOnDownload,
-            Message = body.Message,
-            Password = body.Password, 
-            QuickDownload = body.QuickDownload
-        }));
+        var files = await _unitOfWork.File.GetListAsync(x => x.Transfer!.Key == transferKey, limit: limit, offset: offset);
+        if (files == null) return NotFound();
+        return Ok(files);
     }
-    [HttpPost("confirm")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Confirm([FromBody] ConfirmFilesUploadInputDto body) => Ok(await _confirmFilesUpload.Execute(body));
 }
