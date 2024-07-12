@@ -1,18 +1,39 @@
 ﻿namespace Domain;
 
+public enum ReceiveStatus
+{
+    Pending,
+    PendingProcess,
+    Processing,
+    Error,
+    Received
+}
 public class Receive
 {
-    public Receive(bool received, string? message, IEnumerable<string>? acceptedFiles, int maxSize, string? password)
+    public Receive(ReceiveStatus status, string? message, IEnumerable<string>? acceptedFiles, int maxSize, string? password, int? maxFiles)
     {
-        Received = received;
+        Status = status;
         Message = message;
         AcceptedFiles = acceptedFiles;
         MaxSize = maxSize;
+        MaxFiles = maxFiles;
         Password = password;
     }
-    public bool Received { get; }
-    public string? Message { get; }
-    public IEnumerable<string>? AcceptedFiles { get; }
-    public int MaxSize { get; }
-    public string? Password { get; }
+    public Receive(string? message, IEnumerable<string>? acceptedFiles, int maxSize, string? password, int? maxFiles)
+    {
+        Message = message;
+        AcceptedFiles = acceptedFiles;
+        MaxSize = maxSize;
+        MaxFiles = maxFiles;
+        Password = password;
+        Status = ReceiveStatus.Pending;
+    }
+
+    public ReceiveStatus Status { get; private set; }
+    public string? Message { get; private set; }
+    public int? MaxFiles { get; private set; }
+    public IEnumerable<string>? AcceptedFiles { get; private set; }
+    public int MaxSize { get; private set; }
+    public string? Password { get; private set; }
+    public void UpdateStatus(ReceiveStatus status) => Status = status;
 }

@@ -1,4 +1,6 @@
-﻿namespace Domain;
+﻿using Visus.Cuid;
+
+namespace Domain;
 
 public class Transfer
 {
@@ -12,13 +14,14 @@ public class Transfer
         Path = path;
         TransferType = transferType;
     }
-    public Transfer(string key, int organizationId, DateTime expiresAt, long size, TransferType transferType)
+    public Transfer(int organizationId, DateTime expiresAt, TransferType transferType, long? size = 0)
     {
+        var key = new Cuid2(10).ToString();
         Key = key;
         OrganizationId = organizationId;
         ExpiresAt = expiresAt;
         CreatedAt = DateTime.UtcNow;
-        Size = size;
+        Size = size ?? 0;
         Path = $"{organizationId}/files/{key}";
         TransferType = transferType;
     }
@@ -46,7 +49,7 @@ public class Transfer
     public void SetAsExpired() {
         Expired = true;
     }
-
+    public void SetExpiresAt(DateTime expiresAt) => ExpiresAt = expiresAt;
     public void AddReceive(Receive receive) => Receive = receive;
     public void AddSend(Send send) => Send = send;
 }

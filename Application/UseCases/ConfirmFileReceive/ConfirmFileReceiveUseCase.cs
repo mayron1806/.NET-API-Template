@@ -1,5 +1,4 @@
 ﻿using Application.Exceptions;
-using Application.Services.PlanService;
 using Domain;
 using Infrastructure.Services.Storage;
 using Infrastructure.UnitOfWork;
@@ -23,6 +22,7 @@ public class ConfirmFileReceiveUseCase(
         if (transfer == null) throw new HttpException(400, "Transferencia invalida");
         var count = await _unitOfWork.File.CountByTransferAsync(transfer.Id);
         if(count == 0) throw new HttpException(400, "Nenhum arquivo enviado");
+        List<FileErrorDto> errors = [];
         using (var transaction = await _unitOfWork.BeginTransactionAsync())
         {
             try
@@ -42,6 +42,15 @@ public class ConfirmFileReceiveUseCase(
                         var file = files.First(x => x.Id == fileId);
                         file.SetStatus(isValid ? FileStatus.Received : FileStatus.Error);
                         file.SetErrorMessage(error);
+                        if (!isValid)
+                        {
+                            await HandleDeleteFile(file.Path);
+                            errors.Add(new FileErrorDto {
+                                FileId = fileId, 
+                                OriginalName = file.OriginalName, 
+                                Error = error!
+                            });
+                        }
                     }
                     _logger.LogInformation($"Confirmados: {res.Count(x => x.IsValid)} - Erros: {res.Count(x => !x.IsValid)}");
                     await _unitOfWork.File.UpdateRangeAsync(files);
@@ -55,7 +64,18 @@ public class ConfirmFileReceiveUseCase(
                 throw new HttpException(500, "Ocorreu um erro ao tentar confirmar os arquivos");
             }
         }
-        return new ConfirmFileReceiveOutputDto();
+        return new ConfirmFileReceiveOutputDto() { FilesWithError = errors };
+    }
+    private async Task HandleDeleteFile(string key)
+    {
+        try
+        {
+            await _storageService.DeleteObjectAsync(StorageBuckets.FileTransfer, key);
+        }
+        catch (System.Exception)
+        {
+            _logger.LogWarning($"Erro ao deletar arquivo: {key}");
+        }
     }
     private async Task<(long FileId, bool IsValid, string? Error)> ValidateFile(Domain.File file)
     {

@@ -8,7 +8,6 @@ namespace Application.UseCases.CreateSendTransfer;
 // Size
 public class CreateSendTransferInputDto
 {
-    public int UserId { get; set; }
     public int OrganizationId { get; set; }
     public DateTime? ExpiresAt { get; set; }
     public IEnumerable<FileUpload> Files { get; set; } = [];

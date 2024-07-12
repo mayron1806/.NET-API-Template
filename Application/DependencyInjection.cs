@@ -12,6 +12,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
+using Application.UseCases.CreateReceiveTransfer;
 
 namespace Application;
 
@@ -29,6 +30,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<ForgetPasswordInputDto>, ForgetPasswordValidator>();
         services.AddScoped<IValidator<ActiveAccountInputDto>, ActiveAccountValidator>();
         services.AddScoped<IValidator<CreateSendTransferInputDto>, CreateSendTransferValidator>();
+        services.AddScoped<IValidator<CreateReceiveTransferInputDto>, CreateReceiveTransferValidator>();
         services.AddScoped<IValidator<ConfirmFileReceiveInputDto>, ConfirmFileReceiveValidator>();
         
         // use cases
@@ -39,6 +41,7 @@ public static class DependencyInjection
         services.AddScoped<IResetPasswordUseCase, ResetPasswordUseCase>();
         services.AddScoped<ICreateOrganizationUseCase, CreateOrganizationUseCase>();
         services.AddScoped<ICreateSendTransfer, CreateSendTransferUseCase>();
+        services.AddScoped<ICreateReceiveTransfer, CreateReceiveTransferUseCase>();
         services.AddScoped<IConfirmFileReceive, ConfirmFileReceiveUseCase>();
 
         services.AddQuartz(q =>

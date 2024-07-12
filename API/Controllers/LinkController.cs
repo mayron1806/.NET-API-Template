@@ -1,6 +1,8 @@
 using System.Text.Json;
 using API.Dto;
 using API.Exceptions;
+using Application.UseCases.ConfirmFileReceive;
+using Application.UseCases.ReceiveTransfer;
 using Application.Utils;
 using Infrastructure.Services.Storage;
 using Infrastructure.UnitOfWork;
@@ -12,10 +14,14 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class LinkController(
     ILogger<LinkController> logger, 
-    IUnitOfWork unitOfWork, 
-    IStorageService storageService
+    IUnitOfWork unitOfWork,
+    IConfirmFileReceive confirmFileReceive,
+    IStorageService storageService,
+    IReceiveTransfer receiveTransfer
     ) : BaseController(logger)
 {
+    private readonly IConfirmFileReceive _confirmFileReceive = confirmFileReceive;
+    private readonly IReceiveTransfer _receiveTransfer = receiveTransfer;
     private readonly IStorageService _storageService = storageService;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     
@@ -157,5 +163,20 @@ public class LinkController(
         await Response.WriteAsync($"data: {json}\n\n");
         await Response.Body.FlushAsync();
         return new StatusCodeResult(statusCode);
+    }
+
+    [HttpPost("{transferKey}/upload-files")]
+    public async Task<IActionResult> UploadFiles([FromRoute] string transferKey, [FromBody] ReceiveTransferInputDto body) 
+    {
+        return Ok(await _receiveTransfer.Execute(new ReceiveTransferInputDto{
+            TransferKey = transferKey,
+            Files = body.Files,
+            Password = body.Password
+        }));
+    }
+    [HttpPost("{transferKey}/receive-confirm")]
+    public async Task<IActionResult> ReceiveConfirm([FromRoute] string transferKey)
+    {  
+        return Ok(await _confirmFileReceive.Execute(new ConfirmFileReceiveInputDto{ TransferKey = transferKey }));
     }
 }

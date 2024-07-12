@@ -6,6 +6,7 @@ using Infrastructure.Services.Storage;
 using Infrastructure.UnitOfWork;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Bcpg.Sig;
 using Visus.Cuid;
 
 namespace Application.UseCases.CreateSendTransfer;
@@ -60,13 +61,14 @@ public class CreateSendTransferUseCase(
             throw new HttpException(400, "O(s) arquivo(s) ultrapassam seu limite de arquivos armazenados para transferencia");
         }
         
-        var transferKey = new Cuid2(10).ToString();
         var expiresAt = input.ExpiresAt ?? DateTime.UtcNow.AddDays(plan.Limits.MaxExpireDays);
-        var transfer = new Transfer(transferKey, organization.Id, expiresAt, filesSize, TransferType.Send);
+        if (expiresAt > DateTime.UtcNow.AddDays(plan.Limits.MaxExpireDays)) {
+            expiresAt = DateTime.UtcNow.AddDays(plan.Limits.MaxExpireDays);
+        }
+        var transfer = new Transfer(organization.Id, expiresAt, TransferType.Send, filesSize);
         transfer.AddSend(new Send(
             message: input.Message,
             password: plan.Limits.CanUsePassword && !string.IsNullOrEmpty(input.Password) ? Security.HashPassword(input.Password) : null,
-            quickDownload: plan.Limits.CanUseQuickDownload && input.QuickDownload,
             expiresOnDowload: plan.Limits.CanUseExpiresOnDownload && input.ExpiresOnDownload,
             destination: input.EmailsDestination
         ));

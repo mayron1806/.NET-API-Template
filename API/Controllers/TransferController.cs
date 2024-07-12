@@ -56,10 +56,8 @@ public class TransferController(
     [HttpPost]
     public async Task<ActionResult<CreateSendTransferInputDto>> CreateTransfer([FromBody] CreateSendTransferInputDto body, [FromQuery] string? type = null)
     {
-        var userId = GetUserId();
         var organizationId = GetOrganizationId();
         return Ok(await _CreateSendTransfer.Execute(new() { 
-            UserId = userId,
             OrganizationId = organizationId,
             Files = body.Files,
             EmailsDestination = body.EmailsDestination,

@@ -62,8 +62,9 @@ public class TransferConfiguration : IEntityTypeConfiguration<Transfer>
             .Property(x => x.TransferType)
             .IsRequired();
         builder.OwnsOne(x => x.Receive, r => {
-            r.Property(p => p.Received).HasDefaultValue(false);
+            r.Property(p => p.Status).HasDefaultValue(ReceiveStatus.Pending);
             r.Property(p => p.Message).HasMaxLength(500);
+            r.Property(p => p.MaxFiles).HasDefaultValue(null);
             r.Property(p => p.AcceptedFiles)
                 .HasColumnType("jsonb")
                 .HasConversion(
@@ -83,7 +84,6 @@ public class TransferConfiguration : IEntityTypeConfiguration<Transfer>
          builder.OwnsOne(x => x.Send, r => {
             r.Property(p => p.Message).HasMaxLength(500);
             r.Property(p => p.Password).HasMaxLength(100);
-            r.Property(p => p.QuickDownload).HasDefaultValue(false);
             r.Property(p => p.Downloads).HasDefaultValue(0);
             r.Property(p => p.ExpiresOnDowload).HasDefaultValue(false);
             r.Property(p => p.Destination)
