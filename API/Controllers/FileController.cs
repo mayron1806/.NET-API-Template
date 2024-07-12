@@ -14,10 +14,6 @@ public class FileController(
 {
     private readonly IPrepareFilesUpload _prepareFilesUpload = prepareFilesUpload;
     private readonly IConfirmFilesUpload _confirmFilesUpload = confirmFilesUpload;
-    [HttpGet]
-    public IActionResult Get() {
-        return Ok("testes");
-    }
     [HttpPost]
     public async Task<ActionResult<PrepareFilesUploadInputDto>> PrepareUpload([FromBody] PrepareFilesUploadInputDto body) 
     {

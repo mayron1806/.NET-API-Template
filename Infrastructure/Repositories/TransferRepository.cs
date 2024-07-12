@@ -15,4 +15,12 @@ public class TransferRepository(DatabaseContext context) : Repository<Transfer, 
         transfer.SetAsExpired();
         Update(transfer);
     }
+    public async Task<Transfer?> GetByKeyWithFiles(string key, int limit, int offset) {
+        var transfer = await _dbSet
+            .Where(x => x.Key == key)
+            .Include(x => x.Files.Take(limit).Skip(offset))
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+        return transfer;
+    }
 }

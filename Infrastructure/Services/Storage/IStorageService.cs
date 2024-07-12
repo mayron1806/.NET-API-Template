@@ -3,7 +3,7 @@
 public interface IStorageService
 {
     Task<IEnumerator<string>> ListBucketsAsync();
-    Task<string> GetObjectSignedURLAsync(string bucket, string key, string contentType);
+    Task<string> GetObjectSignedURLAsync(string bucket, string key);
     Task<string> PutObjectSignedURLAsync(string bucket, string key, string contentType);
     Task<bool> DeleteObjectAsync(string bucket, string key);
     Task<bool> DeleteFolderAsync(string bucket, string key);

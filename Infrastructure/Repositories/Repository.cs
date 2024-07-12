@@ -67,14 +67,16 @@ public abstract class Repository<TEntity, Key> : IRepository<TEntity, Key> where
     public virtual async Task<List<TEntity>> GetListAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null,
-        string? includeProperties = null)
+        string? includeProperties = null,
+        int? limit = null,
+        int? offset = null)
     {
         IQueryable<TEntity> query = _dbSet;
         if (filter != null)
         {
             query = query.Where(filter);
         }
+        if (limit != null && offset != null) query = query.Skip(offset.Value).Take(limit.Value);
         if (includeProperties != null)
         {
             foreach (var includeProperty in includeProperties.Split

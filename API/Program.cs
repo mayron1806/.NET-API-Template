@@ -73,7 +73,6 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.RegisterCors();
-
 builder.Services.AddControllers(options => { 
     options.Filters.Add<CustomExceptionFilter>();
     options.Filters.Add<ValidateModelStateAttribute>();
@@ -97,6 +96,7 @@ builder.Services.AddAuthentication(x => {
 builder.Services.AddAuthorization();
 
 builder.Services.AddMemoryCache();
+builder.Services.AddResponseCaching();
 
 var app = builder.Build();
 
@@ -114,7 +114,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<OrganizationMiddleware>();
-
+app.UseResponseCaching();
 app.MapControllers();
 
 app.Run();

@@ -57,14 +57,13 @@ public class StorageService : IStorageService
         return obj;
     }
 
-    public Task<string> GetObjectSignedURLAsync(string bucket, string key, string contentType)
+    public Task<string> GetObjectSignedURLAsync(string bucket, string key)
     {
         var request = new GetPreSignedUrlRequest
         {
             BucketName = bucket,
             Key = key,
-            ContentType = contentType,
-            Expires = DateTime.UtcNow.AddMinutes(1),
+            Expires = DateTime.UtcNow.AddMinutes(5),
         };
         return Task.FromResult(_s3Client.GetPreSignedURL(request));
     }

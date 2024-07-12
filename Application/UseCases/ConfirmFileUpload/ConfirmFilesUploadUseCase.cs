@@ -10,12 +10,10 @@ namespace Application.UseCases.ConfirmFilesUpload;
 public class ConfirmFilesUploadUseCase(
     ILogger<ConfirmFilesUploadUseCase> logger,
     IUnitOfWork unitOfWork,
-    IPlanService planService,
     IStorageService storageService
     ) : UseCase<ConfirmFilesUploadInputDto, ConfirmFilesUploadOutputDto>(logger), IConfirmFilesUpload
 {
     private readonly IStorageService _storageService = storageService;
-    private readonly IPlanService _planService = planService;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly int FILE_READ_BATCH_SIZE = 500;
 
