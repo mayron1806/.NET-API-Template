@@ -58,8 +58,9 @@ public class ConfirmFileReceiveUseCase(
                 await _unitOfWork.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao confirmar os arquivos");
                 await transaction.RollbackAsync();
                 throw new HttpException(500, "Ocorreu um erro ao tentar confirmar os arquivos");
             }
@@ -72,7 +73,7 @@ public class ConfirmFileReceiveUseCase(
         {
             await _storageService.DeleteObjectAsync(StorageBuckets.FileTransfer, key);
         }
-        catch (System.Exception)
+        catch (Exception)
         {
             _logger.LogWarning($"Erro ao deletar arquivo: {key}");
         }

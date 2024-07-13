@@ -16,48 +16,49 @@ public class TransferMiddleware(RequestDelegate next)
             await _next(context);
             return;
         }
-        Console.WriteLine("[ORGANIZATION MIDDLEWARE]");
-        var organizationIdRoute = context.Request.RouteValues["organizationId"]?.ToString();
-        if (!string.IsNullOrEmpty(organizationIdRoute)) {
-            var logger = context.RequestServices.GetRequiredService<ILogger<OrganizationMiddleware>>();
-            var userIdRoute = context.User.FindFirst(ClaimTypes.Name)?.Value;
-            if (string.IsNullOrEmpty(userIdRoute))
-            {
-                await WriteForbiddenResponse(context, "Usuário não tem autorizacão para essa organização");
+        Console.WriteLine("[TRANSFER MIDDLEWARE]");
+        var transferIdRoute = context.Request.RouteValues["transferId"]?.ToString();
+        if (!string.IsNullOrEmpty(transferIdRoute)) {
+            if (!int.TryParse(transferIdRoute, out var transferId)) {
+                await WriteForbiddenResponse(context, "Transferência inválida");
                 return;
             }
-            if(!int.TryParse(userIdRoute, out var userId)) {
-                await WriteForbiddenResponse(context, "Organização inválida");
+            
+            var userIdString = context.User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out var userId)) {
+                await WriteForbiddenResponse(context, "Usuário inválida");
                 return;
             }
-            if(!int.TryParse(organizationIdRoute, out var organizationId)) {
+
+            var organizationIdString = context.Items["organizationId"]?.ToString();
+            if (string.IsNullOrEmpty(organizationIdString) || !int.TryParse(organizationIdString, out var organizationId)) {
                 await WriteForbiddenResponse(context, "Organização inválida");
                 return;
             }
             // pega ou cria organização no cache
+            var logger = context.RequestServices.GetRequiredService<ILogger<TransferMiddleware>>();
             var memoryCache = context.RequestServices.GetRequiredService<IMemoryCache>();
-            var organization = await memoryCache.GetOrCreateAsync(
-                "organization_" + organizationIdRoute + "_user_" + userIdRoute,
+            var canAccessTransfer = await memoryCache.GetOrCreateAsync(
+                "transfer_" + transferIdRoute + "_user_" + userIdString,
                 async entry => {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5);
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60);
                     var uow = context.RequestServices.GetRequiredService<IUnitOfWork>();
                     var members = await uow.Member.GetFirstAsync(x => x.UserId == userId && x.OrganizationId == organizationId);
-                    if (members == null) return null;
+                    if (members == null) return false;
+
+                    var transfer = await uow.Transfer.GetByIdAsync(transferId, "Organization");
+                    if (transfer == null) return false;
+                    if (transfer.OrganizationId != members.OrganizationId) return false;
                     
-                    var org = await uow.Organization.GetByIdAsync(organizationId);
-                    if(org == null) return null;
-                    
-                    logger.LogInformation("[MISS] Organization: " + JsonConvert.SerializeObject(org));
-                    return org;
+                    return true;
                 }
             );
-            if (organization == null)
+            if (!canAccessTransfer)
             {
-                await WriteForbiddenResponse(context, "Usuário não tem autorizacão para essa organização");
+                await WriteForbiddenResponse(context, "Usuário não tem autorizacão para essa transferência");
                 return;
             }
         }
-        context.Items["organizationId"] = organizationIdRoute;
         await _next(context);
     }
     private static async Task WriteForbiddenResponse(HttpContext context, string message)
